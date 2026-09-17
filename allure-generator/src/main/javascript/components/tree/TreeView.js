@@ -29,8 +29,7 @@ class TreeView extends View {
 
     this.listenTo(hotkeys, "key:up", this.onKeyUp, this);
     this.listenTo(hotkeys, "key:down", this.onKeyDown, this);
-    this.listenTo(hotkeys, "key:esc", this.onKeyBack, this);
-    this.listenTo(hotkeys, "key:left", this.onKeyBack, this);
+    this.listenTo(hotkeys, "key:esc", this.onKeyEsc, this);
   }
 
   applyFilters() {
@@ -158,22 +157,22 @@ class TreeView extends View {
     }
   }
 
-  onKeyBack(event) {
-    event.preventDefault();
-    const current = this.routeState.get("treeNode");
-    if (!current) {
-      return;
-    }
-    if (current.testGroup && current.testResult) {
-      if (this.routeState.get("attachment")) {
-        router.setSearch({ attachment: null });
-      } else {
-        router.toUrl(`${this.baseUrl}/${current.testGroup}`);
+  onKeyEsc(event) {
+      event.preventDefault();
+      const current = this.routeState.get("treeNode");
+      if (!current) {
+        return;
       }
-    } else if (current.testGroup) {
-      router.toUrl(`${this.baseUrl}`);
+      if (current.testGroup && current.testResult) {
+        const targetElement = document.querySelector('.modal-main');
+        if (targetElement) {
+          targetElement.style.display = "none";
+        }
+        router.setSearch({ attachment: null });
+      } else if (current.testGroup) {
+        router.toUrl(`${this.baseUrl}`);
+      }
     }
-  }
 
   selectTestResult(testResult) {
     if (testResult) {

@@ -4,7 +4,7 @@ const URL_REGEXP =
   /((?:(https?:\/\/|ftp:\/\/|mailto:)|www\.)\S+?)(\s|"|'|\)|]|}|&#62|$)/gm;
 
 export default function (text) {
-  const hasUrl = text !== undefined && text.match(URL_REGEXP);
+  const hasUrl = false;
 
   if (!hasUrl) {
     return text;
