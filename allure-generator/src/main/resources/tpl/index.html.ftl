@@ -10,11 +10,11 @@
 <#-- @ftlvariable name="reportName" type="java.lang.String" -->
 <#-- @ftlvariable name="reportLanguage" type="java.lang.String" -->
 <!DOCTYPE html>
-<html dir="ltr" lang="${(reportLanguage!"en")?html}">
+<html dir = "ltr" lang="${(reportLanguage!"en")}">
 <head>
     <meta charset="utf-8">
     <meta name="allure-report-uuid" content="${reportUuid}">
-    <title>${(reportName!"Allure Report")?html}</title>
+    <title>${(reportName!"Allure Report")}</title>
     <link rel="icon" href="${faviconUrl}">
     <!-- allure-core-head:start -->
     <#list coreStyleUrls as styleUrl>

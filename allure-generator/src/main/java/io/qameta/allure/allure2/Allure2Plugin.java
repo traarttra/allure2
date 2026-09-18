@@ -23,19 +23,11 @@ import io.qameta.allure.Reader;
 import io.qameta.allure.context.RandomUidContext;
 import io.qameta.allure.core.Configuration;
 import io.qameta.allure.core.ResultsVisitor;
-import io.qameta.allure.entity.Attachment;
-import io.qameta.allure.entity.Label;
-import io.qameta.allure.entity.Link;
-import io.qameta.allure.entity.Parameter;
-import io.qameta.allure.entity.StageResult;
-import io.qameta.allure.entity.Status;
-import io.qameta.allure.entity.Step;
-import io.qameta.allure.entity.Time;
+import io.qameta.allure.entity.*;
 import io.qameta.allure.model.FixtureResult;
 import io.qameta.allure.model.StepResult;
 import io.qameta.allure.model.TestResult;
 import io.qameta.allure.model.TestResultContainer;
-import io.qameta.allure.util.HtmlSanitizerUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,15 +39,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -69,10 +53,7 @@ import static io.qameta.allure.model.Parameter.Mode.HIDDEN;
 import static io.qameta.allure.model.Parameter.Mode.MASKED;
 import static io.qameta.allure.util.ConvertUtils.convertList;
 import static java.nio.file.Files.newDirectoryStream;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsFirst;
-import static java.util.Comparator.nullsLast;
+import static java.util.Comparator.*;
 import static java.util.Objects.nonNull;
 
 /**
@@ -261,7 +242,7 @@ public class Allure2Plugin implements Reader {
         dest.setName(firstNonNull(result.getName(), result.getFullName(), "Unknown test"));
         dest.setTime(Time.create(result.getStart(), result.getStop()));
         dest.setDescription(result.getDescription());
-        dest.setDescriptionHtml(sanitizeDescriptionHtml(result.getDescriptionHtml()));
+        dest.setDescriptionHtml(result.getDescriptionHtml());
         dest.setStatus(convert(result.getStatus()));
         Optional.ofNullable(result.getStatusDetails()).ifPresent(details -> {
             dest.setStatusMessage(details.getMessage());
@@ -302,7 +283,7 @@ public class Allure2Plugin implements Reader {
                 .setStatus(convert(result.getStatus()))
                 .setSteps(convertList(result.getSteps(), step -> convert(source, visitor, step)))
                 .setDescription(result.getDescription())
-                .setDescriptionHtml(sanitizeDescriptionHtml(result.getDescriptionHtml()))
+                .setDescriptionHtml(result.getDescriptionHtml())
                 .setAttachments(convertList(result.getAttachments(), attach -> convert(source, visitor, attach)))
                 .setParameters(convertList(result.getParameters(), p -> !HIDDEN.equals(p.getMode()), this::convert));
         Optional.of(result)
@@ -441,7 +422,7 @@ public class Allure2Plugin implements Reader {
         );
         testStage.setStatus(convert(result.getStatus()));
         testStage.setDescription(result.getDescription());
-        testStage.setDescriptionHtml(sanitizeDescriptionHtml(result.getDescriptionHtml()));
+        testStage.setDescriptionHtml(result.getDescriptionHtml());
         Optional.of(result)
                 .map(TestResult::getStatusDetails)
                 .ifPresent(statusDetails -> {
@@ -453,10 +434,6 @@ public class Allure2Plugin implements Reader {
 
     private boolean hasTestStage(final TestResult result) {
         return !result.getSteps().isEmpty() || !result.getAttachments().isEmpty();
-    }
-
-    private String sanitizeDescriptionHtml(final String source) {
-        return HtmlSanitizerUtils.sanitizeHtml(source);
     }
 
     @SafeVarargs
