@@ -350,7 +350,7 @@ class TreeViewElement extends BaseElement {
 
   getGroupElement(uid: string) {
     return this.querySelector(
-      `.node[data-node-kind='group'][data-node-uid='${uid}']`,
+      `.node[data-node-kind='group'][data-node-uid='${CSS.escape(uid)}']`,
     ) as HTMLElement | null;
   }
 
@@ -408,12 +408,12 @@ class TreeViewElement extends BaseElement {
   findElement(treeNode: { testResult?: string; testGroup?: string }) {
     if (treeNode.testResult) {
       return this.querySelector(
-        `[data-uid='${treeNode.testResult}'][data-parentUid='${treeNode.testGroup}']`,
+        `[data-uid='${CSS.escape(treeNode.testResult)}'][data-parentUid='${CSS.escape(treeNode.testGroup ?? "")}']`,
       );
     }
 
     return this.querySelector(
-      `.node[data-node-kind='group'][data-node-uid='${treeNode.testGroup}'] > .node__title`,
+      `.node[data-node-kind='group'][data-node-uid='${CSS.escape(treeNode.testGroup ?? "")}'] > .node__title`,
     );
   }
 
