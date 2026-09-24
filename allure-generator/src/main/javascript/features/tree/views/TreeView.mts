@@ -254,10 +254,6 @@ class TreeViewElement extends BaseElement {
     this.querySelectorAll(".node__title_active").forEach((node) => {
       node.classList.remove("node__title_active");
     });
-    this.querySelectorAll(".node[data-node-kind='group']").forEach((node) => {
-      node.classList.remove("node__expanded");
-      node.querySelector(":scope > .node__children")?.remove();
-    });
 
     this.syncExpandedNodes(this.treeProjection.items, expandedUids);
 
