@@ -263,6 +263,11 @@ class TreeViewElement extends BaseElement {
     }
   }
 
+  isModalDisplayed() {
+      const modal = document.querySelector<HTMLElement>('*[class^="modal"]');
+      return modal ? getComputedStyle(modal).display !== "none" : false;
+  }
+
   collectExpandedUids({ includeCurrentPath = false }: { includeCurrentPath?: boolean } = {}) {
     if (this.getSearchQuery()) {
       return new Set(this.treeGroupUids);
@@ -467,16 +472,35 @@ class TreeViewElement extends BaseElement {
   }
 
   onKeyUp(event: Event) {
+    if(this.isModalDisplayed()) {
+        return;
+    }
     event.preventDefault();
     this.selectVisibleNode("up");
   }
 
   onKeyDown(event: Event) {
+    if(this.isModalDisplayed()) {
+        return;
+    }
     event.preventDefault();
     this.selectVisibleNode("down");
   }
 
   onKeyBack(event: Event) {
+    if(this.isModalDisplayed()) {
+        const keyboardEvent = event as KeyboardEvent;
+        const isEscape = keyboardEvent.key === "Escape" || keyboardEvent.keyCode === 27;
+        if (isEscape) {
+          const modal = document.querySelector<HTMLElement>('*[class^="modal"]');
+          if (modal) {
+            modal.style.display = "none";
+            return;
+          }
+        } else {
+            return;
+        }
+    }
     event.preventDefault();
     const current = this.getTreeNode();
     if (!current) {
@@ -525,6 +549,9 @@ class TreeViewElement extends BaseElement {
   }
 
   onKeyForward(event: Event) {
+    if(this.isModalDisplayed()) {
+        return;
+    }
     event.preventDefault();
     const current = this.getTreeNode();
     if (!current?.testGroup || current.testResult) {
